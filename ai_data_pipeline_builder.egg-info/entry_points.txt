@@ -1,0 +1,6 @@
+[console_scripts]
+pipeline-api = src.api:run
+pipeline-demo = src.demo:main
+pipeline-evaluate = src.evaluation.harness:main
+pipeline-mcp = src.mcp.server:main
+pipeline-scheduler = src.scheduler_service:main

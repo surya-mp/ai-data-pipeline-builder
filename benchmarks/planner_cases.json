@@ -1,0 +1,81 @@
+[
+  {
+    "id": "customer_order_metrics",
+    "request": "Create a customer-level dataset with total purchase amount, number of orders, and average order value using customers and orders",
+    "schema": {
+      "customers": [
+        {"name": "customer_id", "data_type": "INTEGER", "nullable": false},
+        {"name": "name", "data_type": "TEXT", "nullable": false}
+      ],
+      "orders": [
+        {"name": "order_id", "data_type": "INTEGER", "nullable": false},
+        {"name": "customer_id", "data_type": "INTEGER", "nullable": false},
+        {"name": "amount", "data_type": "REAL", "nullable": false}
+      ]
+    },
+    "foreign_keys": {
+      "orders": [{"constrained_columns": ["customer_id"], "referred_table": "customers", "referred_columns": ["customer_id"]}]
+    },
+    "expected": {
+      "source_tables": ["customers", "orders"],
+      "group_by": ["customers.customer_id"],
+      "metrics": [
+        {"name": "total_amount", "function": "SUM", "column": "orders.amount"},
+        {"name": "order_count", "function": "COUNT", "column": "orders.order_id"},
+        {"name": "average_amount", "function": "AVG", "column": "orders.amount"}
+      ],
+      "output": "customer_analytics"
+    }
+  },
+  {
+    "id": "payment_extract",
+    "request": "Create an analytical dataset using orders and payments",
+    "schema": {
+      "orders": [
+        {"name": "order_id", "data_type": "INTEGER", "nullable": false},
+        {"name": "customer_id", "data_type": "INTEGER", "nullable": false}
+      ],
+      "payments": [
+        {"name": "payment_id", "data_type": "INTEGER", "nullable": false},
+        {"name": "order_id", "data_type": "INTEGER", "nullable": false},
+        {"name": "amount", "data_type": "REAL", "nullable": false}
+      ]
+    },
+    "foreign_keys": {
+      "payments": [{"constrained_columns": ["order_id"], "referred_table": "orders", "referred_columns": ["order_id"]}]
+    },
+    "expected": {
+      "source_tables": ["orders", "payments"],
+      "group_by": [],
+      "metrics": [],
+      "output": "analytical_dataset"
+    }
+  },
+  {
+    "id": "customer_payment_metrics",
+    "request": "Create customer analytics with total payment amount and number of orders using customers, orders, and payments",
+    "schema": {
+      "customers": [{"name": "customer_id", "data_type": "INTEGER", "nullable": false}],
+      "orders": [{"name": "order_id", "data_type": "INTEGER", "nullable": false}, {"name": "customer_id", "data_type": "INTEGER", "nullable": false}, {"name": "amount", "data_type": "NUMERIC", "nullable": false}],
+      "payments": [{"name": "payment_id", "data_type": "INTEGER", "nullable": false}, {"name": "order_id", "data_type": "INTEGER", "nullable": false}, {"name": "paid_amount", "data_type": "NUMERIC", "nullable": false}]
+    },
+    "foreign_keys": {
+      "orders": [{"constrained_columns": ["customer_id"], "referred_table": "customers", "referred_columns": ["customer_id"]}],
+      "payments": [{"constrained_columns": ["order_id"], "referred_table": "orders", "referred_columns": ["order_id"]}]
+    },
+    "expected": {
+      "source_tables": ["customers", "orders", "payments"],
+      "group_by": ["customers.customer_id"],
+      "metrics": [{"name": "total_amount", "function": "SUM", "column": "orders.amount"}, {"name": "order_count", "function": "COUNT", "column": "orders.order_id"}],
+      "output": "customer_analytics"
+    }
+  },
+  {
+    "id": "single_source_extract",
+    "request": "Create an analytical dataset using customers",
+    "schema": {
+      "customers": [{"name": "customer_id", "data_type": "INTEGER", "nullable": false}, {"name": "country", "data_type": "TEXT", "nullable": false}]
+    },
+    "expected": {"source_tables": ["customers"], "group_by": [], "metrics": [], "output": "analytical_dataset"}
+  }
+]

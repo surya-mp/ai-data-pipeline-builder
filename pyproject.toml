@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-data-pipeline-builder"
+version = "0.1.0"
+description = "Natural-language data pipeline builder with safe SQL, DAG execution, quality checks, and EDA."
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "uvicorn[standard]>=0.30,<1",
+  "pydantic>=2.8,<3",
+  "sqlglot>=25,<28",
+  "pandas>=2.2,<3",
+  "plotly>=5.24,<7",
+  "jinja2>=3.1,<4",
+  "sqlalchemy>=2.0,<3",
+  "psycopg[binary]>=3.2,<4",
+  "mcp>=1.0,<2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3,<9", "httpx>=0.27,<1"]
+gemini = ["google-genai>=1.0,<2"]
+
+[project.scripts]
+pipeline-api = "src.api:run"
+pipeline-mcp = "src.mcp.server:main"
+pipeline-evaluate = "src.evaluation.harness:main"
+pipeline-demo = "src.demo:main"
+pipeline-scheduler = "src.scheduler_service:main"
+
+[tool.setuptools]
+packages = ["src", "src.planner", "src.sql", "src.execution", "src.quality", "src.analytics", "src.mcp", "src.evaluation"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
